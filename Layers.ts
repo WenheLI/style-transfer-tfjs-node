@@ -59,7 +59,6 @@ const ResidualBlock = (input: tf.SymbolicTensor): tf.SymbolicTensor => {
 
 
 const TransConv2dInstanced = (input: tf.SymbolicTensor, args: ConvLayerArgs): tf.SymbolicTensor => {
-    console.log(input)
     const tempTransConv2d = conv2dTranspose(args).apply(input);
     const instedTempTransConv2d = instanceNorm().apply(tempTransConv2d);
     return reLU().apply(instedTempTransConv2d) as tf.SymbolicTensor;

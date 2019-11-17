@@ -1,7 +1,25 @@
 import * as tf from '@tensorflow/tfjs';
 import {preprocess} from './vgg';
-const fit = async (dataset: tf.data.Dataset<tf.TensorContainer>) => {
 
+const gramMatrix = (input: tf.Tensor) => {
+    const [batch, width, height, channel] = input.shape;
+    const x = input.reshape([batch * channel, -1]);
+    return tf.matMul(x, x.transpose());
+}
+
+const styleLoss = (input: tf.Tensor) => {
+    let loss = 0;
+
+}
+
+const fit = async (model: tf.LayersModel, dataset: tf.data.Dataset<tf.TensorContainer>) => {
+    const optimizer = tf.train.rmsprop(.001);
+    await dataset.forEachAsync((it) => {
+        optimizer.minimize((): tf.Tensor => {
+            it.
+            preprocess(it)
+        })
+    });
 }
 
 // const optimizer = tf.train.sgd(0.1 /* learningRate */);
