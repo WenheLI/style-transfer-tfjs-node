@@ -13,8 +13,6 @@ const conv2d_1 = Conv2dInstanced(input, {
     padding: "same"
 });
 
-console.log(conv2d_1)
-
 const conv2d_2 = Conv2dInstanced(conv2d_1, {
     filters: 64,
     kernelSize: 3,

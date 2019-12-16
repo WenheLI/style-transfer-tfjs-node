@@ -1,9 +1,11 @@
 import * as tf from '@tensorflow/tfjs-node';
-import { Tensor4D, model, input } from '@tensorflow/tfjs-node';
+import { Tensor4D, model, input, SymbolicTensor } from '@tensorflow/tfjs-node';
 import { ConvLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/convolutional';
 
 const {conv2d, batchNormalization, prelu, add, reLU, conv2dTranspose} = tf.layers;
-
+const init = {
+    kernelInitializer: tf.initializers.truncatedNormal({stddev: .1, seed: 1})
+};
 class InstanceNorm extends tf.layers.Layer {
     constructor() {
         super({});
@@ -33,7 +35,8 @@ const instanceNorm = () => {
 }
 
 const Conv2dInstanced = (input: tf.SymbolicTensor, args: ConvLayerArgs, relu=true): tf.SymbolicTensor => {
-    const tempConv2d = conv2d(args).apply(input);
+
+    const tempConv2d = conv2d(Object.assign(init, args)).apply(input);
     const instedTempConv2d = instanceNorm().apply(tempConv2d) as tf.SymbolicTensor;
     if (relu) {
         return reLU().apply(instedTempConv2d) as tf.SymbolicTensor;
@@ -54,12 +57,13 @@ const ResidualBlock = (input: tf.SymbolicTensor): tf.SymbolicTensor => {
         strides: 1,
         padding: 'same'
     });
-    return tf.layers.add().apply([tempConv1 , tempConv2]);
+    const inputs: Array<tf.SymbolicTensor> = [tempConv1, tempConv2];
+    return tf.layers.add().apply(inputs) as tf.SymbolicTensor;
 }
 
 
 const TransConv2dInstanced = (input: tf.SymbolicTensor, args: ConvLayerArgs): tf.SymbolicTensor => {
-    const tempTransConv2d = conv2dTranspose(args).apply(input);
+    const tempTransConv2d = conv2dTranspose(Object.assign(init, args)).apply(input);
     const instedTempTransConv2d = instanceNorm().apply(tempTransConv2d);
     return reLU().apply(instedTempTransConv2d) as tf.SymbolicTensor;
 }

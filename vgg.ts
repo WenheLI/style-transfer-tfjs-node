@@ -18,3 +18,7 @@ export const vggLayers = async (layerNames: Array<string>) => {
 export function preprocess(x: tf.Tensor) {
     return x.sub(MEAN_PIXEL);
 }
+
+export function unprocess(x: tf.Tensor) {
+    return x.add(MEAN_PIXEL);
+}
